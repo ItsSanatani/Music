@@ -418,22 +418,10 @@ async def back_home_callback(client, callback_query):
     buttons = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text="ᴀᴅᴅ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ",
-                    url=f"https://t.me/{bot.me.username}?startgroup=true",
-                )
+                InlineKeyboardButton(text="ᴀᴅᴅ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ", url=f"https://t.me/{bot.me.username}?startgroup=true",)
             ],
             [
-                InlineKeyboardButton(
-                    text="ᴏᴘᴇɴ ᴄᴏᴍᴍᴀɴᴅ ᴍᴇɴᴜ",
-                    callback_data="open_command_list",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="◁ Back to Home",
-                    callback_data="back_home",
-                )
+                InlineKeyboardButton(text="ᴏᴘᴇɴ ᴄᴏᴍᴍᴀɴᴅ ᴍᴇɴᴜ", callback_data="open_command_list",)
             ],
         ]
     )
@@ -511,11 +499,31 @@ async def command_help(_, query: CallbackQuery):
     )
 #=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
 
-@bot.on_callback_query(rgx("force_close"))
+from pyrogram import filters
+from pyrogram.types import InlineKeyboardMarkup
+import asyncio
+
+@bot.on_callback_query(filters.regex("force_close"))
 async def delete_cb_query(client, query):
     try:
-        return await query.message.delete()
-    except Exception:
+        user = query.from_user
+        mention = f"@{user.username}" if user.username else user.mention
+
+        # Send "Closed by" message
+        closed_msg = await query.message.reply_text(
+            f"**❖ ᴄʟᴏsᴇᴅ ʙʏ:** {mention}",
+            reply_markup=None,
+            quote=True
+        )
+
+        # Delete original message
+        await query.message.delete()
+
+        # Wait 2 seconds then delete the "Closed by" message
+        await asyncio.sleep(2)
+        await closed_msg.delete()
+    except Exception as e:
+        print(f"Error in force_close handler: {e}")
         return
 
 
