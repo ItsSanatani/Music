@@ -970,7 +970,7 @@ async def stream_logger(
         # Optional: check if thumbnail is valid (if it's a URL or file path)
         if thumbnail:
             try:
-                await app.send_photo(LOG_GROUP_ID, photo=thumbnail, caption=caption)
+                await bot.send_photo(LOG_GROUP_ID, photo=thumbnail, caption=caption)
                 print(f"Log sent to {LOG_GROUP_ID}")
             except Exception as e:
                 print(f"Error sending photo to log group: {e}")
