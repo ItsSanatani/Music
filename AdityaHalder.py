@@ -33,7 +33,7 @@ from pyrogram.errors import (
     UserNotParticipant,
 )
 from pytgcalls.exceptions import NoActiveGroupCall
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pytgcalls.types import ChatUpdate, Update, GroupCallConfig
 from pytgcalls.types import Call, MediaStream, AudioQuality, VideoQuality
 
