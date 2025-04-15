@@ -6,9 +6,7 @@ pillow==9.5.0
 python-dotenv==1.0.1
 tgcrypto==1.2.5
 yt-dlp==2025.1.12
-pyrogram==2.0.106
 playwright
 apscheduler
 youtube-search-python
-https://github.com/adityahalder/pyrogram/archive/master.zip
 git+https://github.com/pytgcalls/pytgcalls.git
