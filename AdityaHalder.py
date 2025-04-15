@@ -411,8 +411,7 @@ With Your ☛ Other Friends.**"""
                 return
 
 #=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
-
-@bot.on_callback_query(filters.regex("back_home"))
+@bot.on_callback_query(rgx("back_home"))
 async def back_home_callback(client, callback_query):
     user_id = callback_query.from_user.id
     mention = callback_query.from_user.mention
