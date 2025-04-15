@@ -10,8 +10,17 @@ from dotenv import load_dotenv
 from datetime import datetime
 from typing import Union, List, Pattern
 from logging.handlers import RotatingFileHandler
-
-
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
+import os
+import httpx
+import base64
+import asyncio
+from pyrogram import filters
+from pyrogram.types import Message
+from yt_dlp import YoutubeDL
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from playwright.async_api import async_playwright
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 from motor.motor_asyncio import AsyncIOMotorClient as _mongo_async_
@@ -224,12 +233,132 @@ async def main():
     LOGGER.info("✅ Sucessfully Hosted Your Bot !!")
     LOGGER.info("✅ Now Do Visit: @AdityaServer !!")
     await idle()
+    
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
+
+# ====== CONFIG ======
+GITHUB_TOKEN = "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"
+REPO = "ItsSanatani/Music"
+BRANCH = "aditya"
+FILE_PATH = "cookies.txt"
+
+# ===== LOGIN & COOKIES GENERATOR =====
+EMAIL = "princexrajput@gmail.com"
+PASSWORD = "SACHINx007"
+
+async def login_and_get_cookies():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context()
+        page = await context.new_page()
+
+        await page.goto("https://accounts.google.com/signin/v2/identifier?service=youtube")
+        await page.fill("input[type='email']", EMAIL)
+        await page.click("button:has-text('Next')")
+
+        await page.wait_for_selector("input[type='password']", timeout=60000)
+        await page.fill("input[type='password']", PASSWORD)
+        await page.click("button:has-text('Next')")
+
+        await page.wait_for_url("https://www.youtube.com/*", timeout=60000)
+
+        cookies = await context.cookies("https://www.youtube.com")
+        await browser.close()
+
+        lines = [
+            "# Netscape HTTP Cookie File",
+            "# http://curl.haxx.se/rfc/cookie_spec.html",
+            "# This is a generated file!  Do not edit.\n"
+        ]
+
+        for cookie in cookies:
+            domain = cookie['domain']
+            flag = "TRUE" if domain.startswith(".") else "FALSE"
+            path = cookie['path']
+            secure = "TRUE" if cookie.get('secure') else "FALSE"
+            expiry = int(cookie.get('expires', 0))
+            name = cookie['name']
+            value = cookie['value']
+            lines.append(f"{domain}\t{flag}\t{path}\t{secure}\t{expiry}\t{name}\t{value}")
+
+        return "\n".join(lines)
+
+# ===== CHECK COOKIES STATUS =====
+async def check_cookies():
+    try:
+        opts = {
+            "format": "bestaudio",
+            "quiet": True,
+            "cookiefile": FILE_PATH,
+        }
+        with YoutubeDL(opts) as ytdl:
+            ytdl.extract_info("https://www.youtube.com/watch?v=LLF3GMfNEYU", download=False)
+        return True
+    except Exception:
+        return False
+
+# ===== UPDATE GITHUB FILE =====
+async def update_github_file(new_content: str):
+    url = f"https://api.github.com/repos/{REPO}/contents/{FILE_PATH}"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        r = await client.get(url + f"?ref={BRANCH}", headers=headers)
+        r.raise_for_status()
+        sha = r.json()["sha"]
+
+        data = {
+            "message": "Auto-update cookies.txt",
+            "branch": BRANCH,
+            "committer": {
+                "name": "CookieBot",
+                "email": "bot@example.com"
+            },
+            "content": base64.b64encode(new_content.encode()).decode(),
+            "sha": sha
+        }
+
+        update = await client.put(url, headers=headers, json=data)
+        update.raise_for_status()
+        return update.json()
+
+# ===== ALERT & UPDATE IF NEEDED =====
+async def send_alert():
+    is_alive = await check_cookies()
+
+    if is_alive:
+        await bot.send_message(OWNER_ID, "✅ Cookies are alive.")
+    else:
+        await bot.send_message(OWNER_ID, "⚠️ Cookies expired. Replacing...")
+
+        try:
+            new_cookies = await login_and_get_cookies()
+
+            with open(FILE_PATH, "w", encoding="utf-8") as f:
+                f.write(new_cookies)
+
+            await update_github_file(new_cookies)
+            await bot.send_message(OWNER_ID, "✅ New cookies uploaded to GitHub.")
+        except Exception as e:
+            await bot.send_message(OWNER_ID, f"❌ Failed to update cookies: {e}")
+
+# ===== TELEGRAM COMMAND =====
+@bot.on_message(filters.command("cookiescheck"))
+async def manual_check(_, message: Message):
+    status = await check_cookies()
+    await message.reply("✅ Cookies alive." if status else "❌ Cookies dead.")
+
+# ===== BACKGROUND SCHEDULER =====
+scheduler = AsyncIOScheduler()
+scheduler.add_job(send_alert, "interval", seconds=600)
+scheduler.start()
 
 
 
-
-
-
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
 
 
 
