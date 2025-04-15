@@ -11,4 +11,7 @@ python-dotenv==1.0.1
 tgcrypto==1.2.5
 youtube-search-python
 yt-dlp==2025.1.12
+pyrogram==2.0.106
+playwright
+apscheduler
 https://github.com/adityahalder/pyrogram/archive/master.zip
