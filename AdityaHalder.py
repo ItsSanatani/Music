@@ -410,8 +410,68 @@ With Your ☛ Other Friends.**"""
                 LOGGER.info(f"🚫 Start Error: {e}")
                 return
 
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
+
+@bot.on_callback_query(filters.regex("back_home"))
+async def back_home_callback(client, callback_query):
+    user_id = callback_query.from_user.id
+    mention = callback_query.from_user.mention
+
+    caption = f"""**➻ Hello, {mention}
+
+🥀 I am An ≽ Advanced ≽ High Quality
+Bot, I Can Stream 🌿 Audio & Video In
+Your ♚ Channel And Group.
+
+🐬 Must Click ❥ Open Command List
+Button ⋟ To Get More Info's 🦋 About
+My All Commands.
+
+💐 Feel Free ≽ To Use Me › And Share
+With Your ☛ Other Friends.**"""
+
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    text="🥀 Add Me In Your Chat ✨",
+                    url=f"https://t.me/{bot.me.username}?startgroup=true",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="🌺 Open Command List 🌷",
+                    callback_data="open_command_list",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="◁ Back to Home",
+                    callback_data="back_home",
+                )
+            ],
+        ]
+    )
+
+    try:
+        if START_IMAGE_URL:
+            await callback_query.message.edit_media(
+                media=InputMediaPhoto(
+                    media=START_IMAGE_URL,
+                    caption=caption,
+                ),
+                reply_markup=buttons,
+            )
+        else:
+            await callback_query.message.edit_text(
+                text=caption,
+                reply_markup=buttons,
+            )
+    except Exception as e:
+        LOGGER.info(f"🚫 Back Home Error: {e}")
 
 #=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
+
 # Final Help Caption
 HELP_CAPTION = """** All Members Can Use:**
 /play - Stream Only Audio On VC.
@@ -448,7 +508,7 @@ async def show_help(_, query: CallbackQuery):
                 InlineKeyboardButton("end", callback_data="help_end")
             ],
             [
-                InlineKeyboardButton("• Back •", callback_data="back_to_home")
+                InlineKeyboardButton("• Back •", callback_data="back_home")
             ]
         ])
     )
