@@ -351,13 +351,6 @@ async def manual_check(_, message: Message):
     status = await check_cookies()
     await message.reply("✅ Cookies alive." if status else "❌ Cookies dead.")
 
-# ===== BACKGROUND SCHEDULER =====
-scheduler = AsyncIOScheduler()
-scheduler.add_job(send_alert, "interval", seconds=600)
-scheduler.start()
-
-
-
 #=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
 
 
