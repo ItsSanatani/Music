@@ -412,11 +412,11 @@ With Your ☛ Other Friends.**"""
 
 #=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
 # Final Help Caption
-HELP_CAPTION = """**🥀 All Members Can Use:**
+HELP_CAPTION = """** All Members Can Use:**
 /play - Stream Only Audio On VC.
 /vplay - Stream Audio With Video.
 
-**👾 Only For Chat Admins:**
+** Only For Chat Admins:**
 /pause - Pause Running Stream.
 /resume - Resume Paused Stream.
 /skip - Skip Current Stream To Next.
@@ -435,16 +435,16 @@ async def show_help(_, query: CallbackQuery):
         ),
         reply_markup=InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("▶️ play", callback_data="help_play"),
-                InlineKeyboardButton("🎥 vplay", callback_data="help_vplay")
+                InlineKeyboardButton("play", callback_data="help_play"),
+                InlineKeyboardButton("vplay", callback_data="help_vplay")
             ],
             [
-                InlineKeyboardButton("⏸ pause", callback_data="help_pause"),
-                InlineKeyboardButton("▶️ resume", callback_data="help_resume")
+                InlineKeyboardButton("pause", callback_data="help_pause"),
+                InlineKeyboardButton("resume", callback_data="help_resume")
             ],
             [
-                InlineKeyboardButton("⏭ skip", callback_data="help_skip"),
-                InlineKeyboardButton("⏹ end", callback_data="help_end")
+                InlineKeyboardButton("skip", callback_data="help_skip"),
+                InlineKeyboardButton("end", callback_data="help_end")
             ],
             [
                 InlineKeyboardButton("• Back •", callback_data="back_to_home")
@@ -476,11 +476,11 @@ async def command_help(_, query: CallbackQuery):
 """
 @bot.on_callback_query(rgx("open_command_list"))
 async def open_command_list_alert(client, query):
-    caption = """**🥀 All Members Can Use:**
+    caption = """**All Members Can Use:**
 /play - Stream Only Audio On VC.
 /vplay - Stream Audio With Video.
 
-**👾 Only For Chat Admins:**
+**Only For Chat Admins:**
 /pause - Pause Running Stream.
 /resume - Resume Paused Stream.
 /skip - Skip Current Stream To Next.
@@ -492,7 +492,7 @@ Only in Channels/Groups."""
         [
             [
                 InlineKeyboardButton(
-                    text="🔙 Back",
+                    text="Back",
                     callback_data="back_to_home",
                 )
             ],
@@ -501,7 +501,7 @@ Only in Channels/Groups."""
     try:
         return await query.edit_message_text(text=caption, reply_markup=buttons)
     except Exception as e:
-        LOGGER.info(f"🚫 Cmd Menu Error: {e}")
+        LOGGER.info(f"Cmd Menu Error: {e}")
         return
 
 
