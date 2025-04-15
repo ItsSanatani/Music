@@ -410,8 +410,70 @@ With Your ☛ Other Friends.**"""
                 return
 
 
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
+# Final Help Caption
+HELP_CAPTION = """**🥀 All Members Can Use:**
+/play - Stream Only Audio On VC.
+/vplay - Stream Audio With Video.
 
+**👾 Only For Chat Admins:**
+/pause - Pause Running Stream.
+/resume - Resume Paused Stream.
+/skip - Skip Current Stream To Next.
+/end - Stop Current Running Stream.
 
+**Note:** All Commands Will Work
+Only in Channels/Groups."""
+
+# Callback to show help menu
+@bot.on_callback_query(rgx("open_command_list"))
+async def show_help(_, query: CallbackQuery):
+    await query.edit_message_media(
+        media=InputMediaPhoto(
+            media=START_IMAGE_URL,
+            caption=HELP_CAPTION
+        ),
+        reply_markup=InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("▶️ play", callback_data="help_play"),
+                InlineKeyboardButton("🎥 vplay", callback_data="help_vplay")
+            ],
+            [
+                InlineKeyboardButton("⏸ pause", callback_data="help_pause"),
+                InlineKeyboardButton("▶️ resume", callback_data="help_resume")
+            ],
+            [
+                InlineKeyboardButton("⏭ skip", callback_data="help_skip"),
+                InlineKeyboardButton("⏹ end", callback_data="help_end")
+            ],
+            [
+                InlineKeyboardButton("• Back •", callback_data="back_to_home")
+            ]
+        ])
+    )
+
+# Individual command callbacks
+@bot.on_callback_query(rgx("help_(\\w+)"))
+async def command_help(_, query: CallbackQuery):
+    cmd = query.matches[0].group(1)
+    help_data = {
+        "play": "**/play** - Stream only audio on VC.",
+        "vplay": "**/vplay** - Stream audio with video.",
+        "pause": "**/pause** - Pause the current stream.",
+        "resume": "**/resume** - Resume the paused stream.",
+        "skip": "**/skip** - Skip the current stream.",
+        "end": "**/end** - Stop the running stream."
+    }
+
+    text = help_data.get(cmd, "No help available.")
+    await query.edit_message_text(
+        f"**❖ Help Command: `{cmd}`**\n\n{text}\n\n**Note:** Usable only in groups/channels.",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("« Back", callback_data="open_command_list")]
+        ])
+    )
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
+"""
 @bot.on_callback_query(rgx("open_command_list"))
 async def open_command_list_alert(client, query):
     caption = """**🥀 All Members Can Use:**
@@ -479,7 +541,7 @@ With Your ☛ Other Friends.**"""
     except Exception as e:
         LOGGER.info(f"🚫 Back Menu Error: {e}")
         return
-
+"""
 
 @bot.on_callback_query(rgx("force_close"))
 async def delete_cb_query(client, query):
