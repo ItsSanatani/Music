@@ -28,6 +28,12 @@ from motor.motor_asyncio import AsyncIOMotorClient as _mongo_async_
 from pyrogram import Client, filters as pyrofl
 from pytgcalls import PyTgCalls, filters as pytgfl
 
+from pyrogram import Client, filters as pyrofl
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
+
+from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream.input_audio_stream import InputAudioStream
+
 from pyrogram import idle, __version__ as pyro_version
 from pytgcalls.__version__ import __version__ as pytgcalls_version
 
@@ -1371,12 +1377,6 @@ async def stream_audio_or_video(client, message):
             LOGGER.info(f"🚫 Stream Error: {e}")
             return
 
-
-from pyrogram import Client, filters as pyrofl
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
-
-from pytgcalls.types.input_stream import AudioPiped
-from pytgcalls.types.input_stream.input_audio_stream import InputAudioStream
 
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
 async def pause_running_stream_on_vc(client, message: Message):
