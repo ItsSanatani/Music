@@ -1379,10 +1379,6 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, 
 from pytgcalls.types.input_stream import AudioPiped
 from pytgcalls.types.input_stream.input_audio_stream import InputAudioStream
 
-# Assume you already have this
-from your_module import call, get_call_status, LOGGER  # Replace with actual imports
-
-
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
 async def pause_running_stream_on_vc(client, message: Message):
     await handle_pause(client, message)
