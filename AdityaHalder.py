@@ -1,5 +1,6 @@
 import aiohttp, aiofiles, asyncio, base64, logging
-import os, platform, random, re, socket, sys, time, textwrap, yt_dlp
+import os, platform, random, re, socket
+import sys, time, textwrap, yt_dlp
 
 from os import getenv
 from io import BytesIO
@@ -9,38 +10,45 @@ from dotenv import load_dotenv
 from datetime import datetime
 from typing import Union, List, Pattern
 from logging.handlers import RotatingFileHandler
-
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
+import os
 import httpx
-from pyrogram import Client, filters as pyrofl
-from pyrogram import idle, __version__ as pyro_version
-from pyrogram.types import (
-    Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
-)
-from pyrogram.enums import ChatMemberStatus, ChatType
-from pyrogram.errors import (
-    ChatAdminRequired, FloodWait, InviteRequestSent,
-    UserAlreadyParticipant, UserNotParticipant
-)
-
+import base64
+import asyncio
+from pyrogram import filters
+from pyrogram.types import Message
 from yt_dlp import YoutubeDL
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from playwright.async_api import async_playwright
-
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 from motor.motor_asyncio import AsyncIOMotorClient as _mongo_async_
 
-from pytgcalls import PyTgCalls
+from pyrogram import Client, filters as pyrofl
+from pytgcalls import PyTgCalls, filters as pytgfl
+
+
+from pyrogram import idle, __version__ as pyro_version
 from pytgcalls.__version__ import __version__ as pytgcalls_version
+
 from ntgcalls import TelegramServerError
+from pyrogram.enums import ChatMemberStatus, ChatType
+from pyrogram.errors import (
+    ChatAdminRequired,
+    FloodWait,
+    InviteRequestSent,
+    UserAlreadyParticipant,
+    UserNotParticipant,
+)
 from pytgcalls.exceptions import NoActiveGroupCall
-from pytgcalls.types import Update, GroupCallConfig
+from pyrogram.types import InputMediaPhoto
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from pytgcalls.types import ChatUpdate, Update, GroupCallConfig
 from pytgcalls.types import Call, MediaStream, AudioQuality, VideoQuality
 
-from pytgcalls import filters as pytgfl
-from pytgcalls.types.events import ChatUpdate
-
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageEnhance
+from PIL import ImageFilter, ImageFont, ImageOps
 from youtubesearchpython.__future__ import VideosSearch
 
 
@@ -1197,7 +1205,10 @@ async def stream_audio_or_video(client, message):
     buttons = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(text="ᴄʟᴏsᴇ", callback_data="force_close",)
+                InlineKeyboardButton(
+                    text="ᴄʟᴏsᴇ",
+                    callback_data="force_close",
+                )
             ],
         ]
     )
@@ -1361,6 +1372,7 @@ async def stream_audio_or_video(client, message):
             LOGGER.info(f"🚫 Stream Error: {e}")
             return
 
+
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
 async def pause_running_stream_on_vc(client, message):
     chat_id = message.chat.id
@@ -1371,18 +1383,18 @@ async def pause_running_stream_on_vc(client, message):
     try:
         call_status = await get_call_status(chat_id)
         if call_status == "IDLE" or call_status == "NOTHING":
-            return await message.reply_text("**❎ Nothing Streaming❗**")
+            return await message.reply_text("**❖ ɴᴏᴛʜɪɴɢ sᴛʀᴇᴀᴍɪɴɢ...**")
 
         elif call_status == "PAUSED":
-            return await message.reply_text("**🔈 Already Paused❗**")
+            return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴘᴀᴜsᴇᴅ...**")
         elif call_status == "PLAYING":
             await call.pause_stream(chat_id)
-            return await message.reply_text("**🔈 Stream Paused❗**")
+            return await message.reply_text("**❖ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ...**")
         else:
             return
     except Exception as e:
         try:
-            await bot.send_message(chat_id, f"**🚫 Stream Pause Error:** `{e}`")
+            await bot.send_message(chat_id, f"**🚫 sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇ ᴇʀʀᴏʀ:** `{e}`")
         except Exception:
             LOGGER.info(f"🚫 Stream Pause Error: {e}")
             return
