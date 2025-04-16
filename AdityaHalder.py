@@ -1376,7 +1376,13 @@ async def stream_audio_or_video(client, message):
 from pyrogram import Client, filters as pyrofl
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 
-# Replace with your actual decorators and imports
+from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream.input_audio_stream import InputAudioStream
+
+# Assume you already have this
+from your_module import call, get_call_status, LOGGER  # Replace with actual imports
+
+
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
 async def pause_running_stream_on_vc(client, message: Message):
     await handle_pause(client, message)
@@ -1403,7 +1409,11 @@ async def handle_pause(client, message: Message):
         elif call_status == "PAUSED":
             return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴘᴀᴜsᴇᴅ...**", reply_markup=pause_markup())
         elif call_status == "PLAYING":
-            await call.pause_stream(chat_id)
+            # Pause simulation using silent audio
+            await call.change_stream(
+                chat_id,
+                AudioPiped("assets/silence.mp3")  # Make sure this file exists
+            )
             return await message.reply_text("**❖ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ...**", reply_markup=pause_markup())
 
     except Exception as e:
