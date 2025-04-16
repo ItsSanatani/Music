@@ -27,15 +27,17 @@ from motor.motor_asyncio import AsyncIOMotorClient as _mongo_async_
 
 from pyrogram import Client, filters as pyrofl
 from pytgcalls import PyTgCalls, filters as pytgfl
-
-from pyrogram import Client, filters as pyrofl
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
-
-from pytgcalls.types.input_stream import AudioPiped
-from pytgcalls.types.input_stream.input_audio_stream import InputAudioStream
 
 from pyrogram import idle, __version__ as pyro_version
 from pytgcalls.__version__ import __version__ as pytgcalls_version
+
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
+from pytgcalls import PyTgCalls
+from pytgcalls.types.stream import StreamAudioEnded
+from pytgcalls.types.stream.stream import StreamAudio
+
+
 
 from ntgcalls import TelegramServerError
 from pyrogram.enums import ChatMemberStatus, ChatType
@@ -145,7 +147,7 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
 )
-
+call = PyTgCalls(Client(...))
 call = PyTgCalls(app)
 call_config = GroupCallConfig(auto_start=False)
 
@@ -1377,17 +1379,19 @@ async def stream_audio_or_video(client, message):
             LOGGER.info(f"🚫 Stream Error: {e}")
             return
 
+def pause_markup():
+    return InlineKeyboardMarkup([[
+        InlineKeyboardButton("⏸ Pause", callback_data="pause_stream")
+    ]])
 
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
 async def pause_running_stream_on_vc(client, message: Message):
     await handle_pause(client, message)
 
-
 @bot.on_callback_query(pyrofl.regex("pause_stream"))
 async def pause_callback_handler(client, callback_query: CallbackQuery):
     await callback_query.answer()
     await handle_pause(client, callback_query.message)
-
 
 async def handle_pause(client, message: Message):
     chat_id = message.chat.id
@@ -1400,29 +1404,20 @@ async def handle_pause(client, message: Message):
         call_status = await get_call_status(chat_id)
 
         if call_status in ["IDLE", "NOTHING"]:
-            return await message.reply_text("**❖ ɴᴏᴛʜɪɴɢ sᴛʀᴇᴀᴍɪɴɢ...**", reply_markup=pause_markup())
+            return await message.reply_text("**❖ ɴɔʇɪɴɢ sᴛʀɛᴀᴍɪɴɢ...**", reply_markup=pause_markup())
         elif call_status == "PAUSED":
-            return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴘᴀᴜsᴇᴅ...**", reply_markup=pause_markup())
+            return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴿᴀᴜᴎᴇᴅ...**", reply_markup=pause_markup())
         elif call_status == "PLAYING":
-            # Pause simulation using silent audio
-            await call.change_stream(
-                chat_id,
-                AudioPiped("assets/silence.mp3")  # Make sure this file exists
-            )
-            return await message.reply_text("**❖ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ...**", reply_markup=pause_markup())
+            await call.change_stream(chat_id, StreamAudio("assets/silence.mp3"))  # File must exist
+            return await message.reply_text("**❖ sᴛʀɛᴀᴍ ᴿᴀᴜᴜᴅ...**", reply_markup=pause_markup())
 
     except Exception as e:
         try:
-            await client.send_message(chat_id, f"**🚫 sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇ ᴇʀʀᴏʀ:** `{e}`")
+            await client.send_message(chat_id, f"**🚫 sᴛʀɛᴀᴍ ᴿᴀᴜᴜᴇ ᴇʀʀᴏʀ:** `{e}`")
         except Exception:
             LOGGER.info(f"🚫 Stream Pause Error: {e}")
             return
 
-
-def pause_markup():
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton("⏸ Pause", callback_data="pause_stream")
-    ]])
     
 
 
