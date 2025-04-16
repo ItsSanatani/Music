@@ -346,7 +346,7 @@ async def send_alert():
             await bot.send_message(OWNER_ID, f"❌ Failed to update cookies: {e}")
 
 # ===== TELEGRAM COMMAND =====
-@bot.on_message(filters.command("cookiescheck"))
+@bot.on_message(filters.command("cookies", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def manual_check(_, message: Message):
     status = await check_cookies()
     await message.reply("✅ Cookies alive." if status else "❌ Cookies dead.")
@@ -472,9 +472,7 @@ async def add_served_user(user_id: int):
 
 
 # Callback & Message Queries
-
-
-@bot.on_message(cdx(["start", "help"]) & pyrofl.private)
+@bot.on_message(filters.command("start", "help", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def start_message_private(client, message):
     user_id = message.from_user.id
     mention = message.from_user.mention
@@ -1077,7 +1075,7 @@ async def get_call_status(chat_id):
     return call_status
 
 
-@bot.on_message(cdz(["play", "vplay"]) & ~pyrofl.private)
+@bot.on_message(filters.command("play", "vplay", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def stream_audio_or_video(client, message):
     try:
         await message.delete()
@@ -1373,7 +1371,7 @@ async def stream_audio_or_video(client, message):
             return
 
 
-@bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
+@bot.on_message(filters.command("pause", "vpause", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def pause_running_stream_on_vc(client, message):
     chat_id = message.chat.id
     try:
@@ -1399,8 +1397,7 @@ async def pause_running_stream_on_vc(client, message):
             LOGGER.info(f"🚫 Stream Pause Error: {e}")
             return
 
-
-@bot.on_message(cdx(["resume", "vresume"]) & ~pyrofl.private)
+@bot.on_message(filters.command("resume", "vresume", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def resume_paused_stream_on_vc(client, message):
     chat_id = message.chat.id
     try:
@@ -1426,8 +1423,7 @@ async def resume_paused_stream_on_vc(client, message):
             LOGGER.info(f"🚫 Stream Resume Error: {e}")
             return
 
-
-@bot.on_message(cdx(["skip", "vskip"]) & ~pyrofl.private)
+@bot.on_message(filters.command("skip", "vskip", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def skip_and_change_stream(client, message):
     chat_id = message.chat.id
     try:
@@ -1468,8 +1464,7 @@ async def skip_and_change_stream(client, message):
             LOGGER.info(f"🚫 Skip Error: {e}")
             return
 
-
-@bot.on_message(cdx(["end", "vend"]) & ~pyrofl.private)
+@bot.on_message(filters.command("end", "vend", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def stop_stream_and_leave_vc(client, message):
     chat_id = message.chat.id
     try:
@@ -1509,7 +1504,7 @@ async def stream_end_handler(_, update: Update):
     return await change_stream(chat_id)
 
 
-@bot.on_message(cdx("ping") & ~pyrofl.bot)
+@bot.on_message(filters.command("ping", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def check_sping(client, message):
     start = datetime.now()
 
@@ -1581,7 +1576,7 @@ async def update_repo_latest(client, message):
     return
 
 
-@bot.on_message(cdx(["stats"]) & ~pyrofl.private)
+@bot.on_message(filters.command("stats", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def check_bot_stats(client, message):
     try:
         await message.delete()
