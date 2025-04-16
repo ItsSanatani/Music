@@ -235,6 +235,52 @@ async def main():
     await idle()
     
 #=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
+@bot.on_message(cdx("pingp") & ~pyrofl.bot)
+async def check_sping(client, message):
+    start = datetime.now()
+
+    button = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("➕ ᴀᴅᴅ ᴍᴇ ɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ", url=f"https://t.me/{bot.me.username}?startgroup=true")
+        ]]
+    )
+
+    m = await message.reply_text("**ᴘɪɴɢ...!!**", reply_markup=button)
+
+    end = datetime.now()
+    ms = (end - start).microseconds / 1000
+
+    await m.edit_text(
+        f"**❖ ᴘɪɴɢᴇᴅ ʟᴀᴛᴇɴᴄʏ :** `{ms}` ᴍs[ ](https://files.catbox.moe/x1oy9g.jpg)",
+        reply_markup=button
+    )
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
+@bot.on_message(cdx("pingi") & ~pyrofl.bot)
+async def check_sping(client, message):
+    start = datetime.now()
+
+    photo_url = "https://files.catbox.moe/x1oy9g.jpg"
+
+    button = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("➕ ᴀᴅᴅ ᴍᴇ ɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ", url=f"https://t.me/{bot.me.username}?startgroup=true")
+        ]]
+    )
+
+    m = await message.reply_photo(
+        photo=photo_url,
+        caption="**ᴘɪɴɢ...!!**",
+        reply_markup=button
+    )
+
+    end = datetime.now()
+    ms = (end - start).microseconds / 1000
+
+    await m.edit_caption(
+        f"**❖ ᴘɪɴɢᴇᴅ ʟᴀᴛᴇɴᴄʏ:** `{ms}` ᴍs",
+        reply_markup=button
+    )
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×
 
 # ====== CONFIG ======
 GITHUB_TOKEN = "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"
