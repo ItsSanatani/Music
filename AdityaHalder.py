@@ -1214,9 +1214,6 @@ async def stream_audio_or_video(client, message):
             [
                 InlineKeyboardButton(text="ᴄʟᴏsᴇ", callback_data="force_close",)
             ],
-            [
-                InlineKeyboardButton(text="Pause", callback_data="pause_stream",)
-            ],
         ]
     )
     if stream_type == "Audio":
@@ -1379,46 +1376,31 @@ async def stream_audio_or_video(client, message):
             LOGGER.info(f"🚫 Stream Error: {e}")
             return
 
-def pause_markup():
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton("⏸ Pause", callback_data="pause_stream")
-    ]])
-
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
-async def pause_running_stream_on_vc(client, message: Message):
-    await handle_pause(client, message)
-
-@bot.on_callback_query(pyrofl.regex("pause_stream"))
-async def pause_callback_handler(client, callback_query: CallbackQuery):
-    await callback_query.answer()
-    await handle_pause(client, callback_query.message)
-
-async def handle_pause(client, message: Message):
+async def pause_running_stream_on_vc(client, message):
     chat_id = message.chat.id
     try:
         await message.delete()
     except Exception:
         pass
-
     try:
         call_status = await get_call_status(chat_id)
+        if call_status == "IDLE" or call_status == "NOTHING":
+            return await message.reply_text("**❎ Nothing Streaming❗**")
 
-        if call_status in ["IDLE", "NOTHING"]:
-            return await message.reply_text("**❖ ɴɔʇɪɴɢ sᴛʀɛᴀᴍɪɴɢ...**", reply_markup=pause_markup())
         elif call_status == "PAUSED":
-            return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴿᴀᴜᴎᴇᴅ...**", reply_markup=pause_markup())
+            return await message.reply_text("**🔈 Already Paused❗**")
         elif call_status == "PLAYING":
-            await call.change_stream(chat_id, StreamAudio("assets/silence.mp3"))  # File must exist
-            return await message.reply_text("**❖ sᴛʀɛᴀᴍ ᴿᴀᴜᴜᴅ...**", reply_markup=pause_markup())
-
+            await call.pause_stream(chat_id)
+            return await message.reply_text("**🔈 Stream Paused❗**")
+        else:
+            return
     except Exception as e:
         try:
-            await client.send_message(chat_id, f"**🚫 sᴛʀɛᴀᴍ ᴿᴀᴜᴜᴇ ᴇʀʀᴏʀ:** `{e}`")
+            await bot.send_message(chat_id, f"**🚫 Stream Pause Error:** `{e}`")
         except Exception:
             LOGGER.info(f"🚫 Stream Pause Error: {e}")
             return
-
-    
 
 
 @bot.on_message(cdx(["resume", "vresume"]) & ~pyrofl.private)
