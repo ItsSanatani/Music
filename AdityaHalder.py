@@ -32,13 +32,6 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, 
 from pyrogram import idle, __version__ as pyro_version
 from pytgcalls.__version__ import __version__ as pytgcalls_version
 
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
-from pytgcalls import PyTgCalls
-from pytgcalls.types.stream import StreamAudioEnded
-from pytgcalls.types.stream.stream import StreamAudio
-
-
-
 from ntgcalls import TelegramServerError
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.errors import (
@@ -147,7 +140,7 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
 )
-call = PyTgCalls(Client(...))
+
 call = PyTgCalls(app)
 call_config = GroupCallConfig(auto_start=False)
 
