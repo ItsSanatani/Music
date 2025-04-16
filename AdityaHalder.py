@@ -1205,10 +1205,10 @@ async def stream_audio_or_video(client, message):
     buttons = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text="ᴄʟᴏsᴇ",
-                    callback_data="force_close",
-                )
+                InlineKeyboardButton(text="ᴄʟᴏsᴇ", callback_data="force_close",)
+            ],
+            [
+                InlineKeyboardButton(text="Pause", callback_data="pause_stream",)
             ],
         ]
     )
@@ -1373,31 +1373,52 @@ async def stream_audio_or_video(client, message):
             return
 
 
+from pyrogram import Client, filters as pyrofl
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
+
+# Replace with your actual decorators and imports
 @bot.on_message(cdx(["pause", "vpause"]) & ~pyrofl.private)
-async def pause_running_stream_on_vc(client, message):
+async def pause_running_stream_on_vc(client, message: Message):
+    await handle_pause(client, message)
+
+
+@bot.on_callback_query(pyrofl.regex("pause_stream"))
+async def pause_callback_handler(client, callback_query: CallbackQuery):
+    await callback_query.answer()
+    await handle_pause(client, callback_query.message)
+
+
+async def handle_pause(client, message: Message):
     chat_id = message.chat.id
     try:
         await message.delete()
     except Exception:
         pass
+
     try:
         call_status = await get_call_status(chat_id)
-        if call_status == "IDLE" or call_status == "NOTHING":
-            return await message.reply_text("**❖ ɴᴏᴛʜɪɴɢ sᴛʀᴇᴀᴍɪɴɢ...**")
 
+        if call_status in ["IDLE", "NOTHING"]:
+            return await message.reply_text("**❖ ɴᴏᴛʜɪɴɢ sᴛʀᴇᴀᴍɪɴɢ...**", reply_markup=pause_markup())
         elif call_status == "PAUSED":
-            return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴘᴀᴜsᴇᴅ...**")
+            return await message.reply_text("**❖ ᴀʟʀᴇᴀᴅʏ ᴘᴀᴜsᴇᴅ...**", reply_markup=pause_markup())
         elif call_status == "PLAYING":
             await call.pause_stream(chat_id)
-            return await message.reply_text("**❖ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ...**")
-        else:
-            return
+            return await message.reply_text("**❖ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ...**", reply_markup=pause_markup())
+
     except Exception as e:
         try:
-            await bot.send_message(chat_id, f"**🚫 sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇ ᴇʀʀᴏʀ:** `{e}`")
+            await client.send_message(chat_id, f"**🚫 sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇ ᴇʀʀᴏʀ:** `{e}`")
         except Exception:
             LOGGER.info(f"🚫 Stream Pause Error: {e}")
             return
+
+
+def pause_markup():
+    return InlineKeyboardMarkup([[
+        InlineKeyboardButton("⏸ Pause", callback_data="pause_stream")
+    ]])
+    
 
 
 @bot.on_message(cdx(["resume", "vresume"]) & ~pyrofl.private)
@@ -1509,7 +1530,7 @@ async def stream_end_handler(_, update: Update):
     return await change_stream(chat_id)
 
 
-@bot.on_message(cdx("pingi") & ~pyrofl.bot)
+@bot.on_message(cdx("ping") & ~pyrofl.bot)
 async def check_sping(client, message):
     start = datetime.now()
 
