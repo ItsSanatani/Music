@@ -472,7 +472,7 @@ async def add_served_user(user_id: int):
 
 
 # Callback & Message Queries
-@bot.on_message(filters.command("[start", "help"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command(["start", "help"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def start_message_private(client, message):
     user_id = message.from_user.id
     mention = message.from_user.mention
