@@ -472,7 +472,7 @@ async def add_served_user(user_id: int):
 
 
 # Callback & Message Queries
-@bot.on_message(filters.command("start", "help", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command("[start", "help"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def start_message_private(client, message):
     user_id = message.from_user.id
     mention = message.from_user.mention
@@ -1075,7 +1075,7 @@ async def get_call_status(chat_id):
     return call_status
 
 
-@bot.on_message(filters.command("play", "vplay", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command(["play", "vplay"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def stream_audio_or_video(client, message):
     try:
         await message.delete()
@@ -1370,8 +1370,7 @@ async def stream_audio_or_video(client, message):
             LOGGER.info(f"🚫 Stream Error: {e}")
             return
 
-
-@bot.on_message(filters.command("pause", "vpause", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command(["pause", "vpause"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def pause_running_stream_on_vc(client, message):
     chat_id = message.chat.id
     try:
@@ -1397,7 +1396,7 @@ async def pause_running_stream_on_vc(client, message):
             LOGGER.info(f"🚫 Stream Pause Error: {e}")
             return
 
-@bot.on_message(filters.command("resume", "vresume", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command(["resume", "vresume"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def resume_paused_stream_on_vc(client, message):
     chat_id = message.chat.id
     try:
@@ -1423,7 +1422,7 @@ async def resume_paused_stream_on_vc(client, message):
             LOGGER.info(f"🚫 Stream Resume Error: {e}")
             return
 
-@bot.on_message(filters.command("skip", "vskip", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command(["skip", "vskip"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def skip_and_change_stream(client, message):
     chat_id = message.chat.id
     try:
@@ -1464,7 +1463,7 @@ async def skip_and_change_stream(client, message):
             LOGGER.info(f"🚫 Skip Error: {e}")
             return
 
-@bot.on_message(filters.command("end", "vend", prefixes=["/", "!", "%", ",", ".", "@", "#"]))
+@bot.on_message(filters.command(["end", "vend"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def stop_stream_and_leave_vc(client, message):
     chat_id = message.chat.id
     try:
