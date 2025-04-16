@@ -461,16 +461,7 @@ async def add_served_user(user_id: int):
 
 
 
-
-
-
-
-
-
-
-
-
-
+#=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×°×=×=×=×=×=×=×=÷°÷=
 # Callback & Message Queries
 @bot.on_message(filters.command(["start", "help"], prefixes=["/", "!", "%", ",", ".", "@", "#"]))
 async def start_message_private(client, message):
@@ -507,7 +498,10 @@ async def start_message_private(client, message):
         if START_IMAGE_URL:
             try:
                 return await message.reply_photo(
-                    photo=START_IMAGE_URL, caption=caption, reply_markup=buttons
+                    photo=START_IMAGE_URL,
+                    caption=caption,
+                    reply_markup=buttons,
+                    has_spoiler=True  # यही लाइन जोड़ी गई है सिर्फ
                 )
             except Exception as e:
                 LOGGER.info(f"🚫 Start Image Error: {e}")
